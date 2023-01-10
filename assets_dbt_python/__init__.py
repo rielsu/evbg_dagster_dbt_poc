@@ -13,8 +13,8 @@ from dagster import (
 )
 from dagster._utils import file_relative_path
 
-DBT_PROJECT_DIR = file_relative_path(__file__, "../dbt_project")
-DBT_PROFILES_DIR = file_relative_path(__file__, "../dbt_project/config")
+DBT_PROJECT_DIR = file_relative_path(__file__, "../evbg_dbt_project")
+DBT_PROFILES_DIR = file_relative_path(__file__, "../evbg_dbt_project/config")
 
 # all assets live in the default dbt_schema
 dbt_assets = load_assets_from_dbt_project(
@@ -27,21 +27,21 @@ dbt_assets = load_assets_from_dbt_project(
     source_key_prefix=["duckdb"],
 )
 
-raw_data_assets = load_assets_from_package_module(
-    raw_data,
-    group_name="raw_data",
-    # all of these assets live in the duckdb database, under the schema raw_data
-    key_prefix=["duckdb", "raw_data"],
-)
+# raw_data_assets = load_assets_from_package_module(
+#     raw_data,
+#     group_name="raw_data",
+#     # all of these assets live in the duckdb database, under the schema raw_data
+#     key_prefix=["duckdb", "raw_data"],
+# )
 
-forecasting_assets = load_assets_from_package_module(
-    forecasting,
-    group_name="forecasting",
-)
+# forecasting_assets = load_assets_from_package_module(
+#     forecasting,
+#     group_name="forecasting",
+# )
 
 # define jobs as selections over the larger graph
-everything_job = define_asset_job("everything_everywhere_job", selection="*")
-forecast_job = define_asset_job("refresh_forecast_model_job", selection="*order_forecast_model")
+# everything_job = define_asset_job("everything_everywhere_job", selection="*")
+# forecast_job = define_asset_job("refresh_forecast_model_job", selection="*order_forecast_model")
 
 resources = {
     # this io_manager allows us to load dbt models as pandas dataframes
@@ -57,10 +57,11 @@ resources = {
 }
 
 defs = Definitions(
-    assets=[*dbt_assets, *raw_data_assets, *forecasting_assets],
+    #assets=[*dbt_assets, *raw_data_assets, *forecasting_assets],
+    assets=[*dbt_assets],
     resources=resources,
-    schedules=[
-        ScheduleDefinition(job=everything_job, cron_schedule="@weekly"),
-        ScheduleDefinition(job=forecast_job, cron_schedule="@daily"),
-    ],
+    # schedules=[
+    #     ScheduleDefinition(job=everything_job, cron_schedule="@weekly"),
+    #     ScheduleDefinition(job=forecast_job, cron_schedule="@daily"),
+    # ],
 )
