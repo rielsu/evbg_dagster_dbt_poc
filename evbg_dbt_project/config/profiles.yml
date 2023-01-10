@@ -1,0 +1,37 @@
+evbg:
+  target: development
+  outputs:
+    local:
+      type: duckdb
+      path: evbg.duckdb
+    development:
+      account: vha23173
+      authenticator: externalbrowser
+      database: RISK_EVENTS
+      role: ACCOUNTADMIN
+      schema: ANALYTICS
+      threads: 1
+      type: snowflake
+      user: suriel.garcia@everbridge.com
+      warehouse: DEV_WH
+    staging:
+      account: vha23173
+      authenticator: externalbrowser
+      database: RISK_EVENTS
+      role: ACCOUNTADMIN
+      schema: ANALYTICS
+      threads: 1
+      type: snowflake
+      user: suriel.garcia@everbridge.com
+      warehouse: DEV_WH
+    production:
+      account: vha23173
+      authenticator: externalbrowser
+      database: RISK_EVENTS
+      role: ACCOUNTADMIN
+      schema: ANALYTICS
+      threads: 1
+      type: snowflake
+      user: suriel.garcia@everbridge.com
+      warehouse: DEV_WH
+

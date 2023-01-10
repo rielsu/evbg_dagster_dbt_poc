@@ -1,0 +1,51 @@
+version: 2
+
+sources:
+  - name: alerts_raw
+    description: Snowflake database where raw Alerts data lives
+    database: RISK_EVENTS_PROCESSING
+    schema: RAW
+    tables:
+      - name: ALERTS_LANDING
+        description: Raw Alerts data
+
+  - name: analytics
+    tables:
+      - name: alerts
+        columns:
+          - name: ALERTID
+          - name: ORGANIZATIONID
+          - name: EXPIREAT
+          - name: EXPIRYDATE
+          - name: IMPACTAREA
+          - name: ISACTIVE
+          - name: REVISION
+          - name: SNOOZEUNTIL
+          - name: RISKEVENTID
+          - name: RISKEVENTEXTERNALID
+          - name: RISKEVENTCONFIGURATIONID
+          - name: DWINSERTEDDATE
+          - name: RESUMETOKEN
+          - name: PAYLOAD
+          - name: RISK_EVENT_SOURCE
+          - name: RISK_EVENT_JOIN_ID
+          - name: ALERT_SOURCE
+        
+      - name: alerts_action_history
+        columns:
+
+          - name: ALERTID
+          - name: ORGANIZATIONID
+          - name: REVISION
+          - name: ACTIONTYPE
+          - name: ACTIONTIME
+          - name: PREVIOUSVERSION
+          - name: DISPOSITION
+          - name: NOTES
+          - name: USERNAME
+          - name: RESUMETOKEN
+          - name: ACTIONPAYLOAD
+          - name: ALERT_SOURCE    
+
+
+
