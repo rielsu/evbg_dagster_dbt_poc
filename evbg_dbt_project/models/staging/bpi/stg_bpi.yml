@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: stg_subscriptions
+    description: A flattened view of subscriptions where each invoice period is in a separate row
+  - name: stg_subscription_by_account
+    description: Parses the subscription_id out of the account's financeIdentifier
+    columns:
+      - name: account_id
+      - name: subscription_id
+        description: If the financeIdentifier is a SalesForce Netsuite ID, parses the 4-5 digits for subscription ID; otherwise, is the value of financeIdentifier
+      - name: type
+        description: "{{ doc('type') }}"
+        tests:
+          - accepted_values:
+              values:
+                - Client
+                - Demo
+                - Internal
+                - Nixle Standalone
+                - Partner
+                - Pilot
+                - Staff
+  - name: stg_subscription_by_organization
+    description: Parses the subscription_id out of the organization's financeIdentifier
+    columns:
+      - name: organization_id
+      - name: subscription_id
+        description: If the financeIdentifier is a SalesForce Netsuite ID, parses the 4-5 digits for subscription ID; otherwise, is the value of financeIdentifier
+      - name: type
+        description: "{{ doc('type') }}"
+        tests:
+          - accepted_values:
+              values:
+                - Client
+                - Demo
+                - Internal
+                - Nixle Standalone
+                - Partner
+                - Pilot
+                - Staff
+  - name: stg_subscription_threshold_triggers
+    description: A flattened view of subscription threshold triggers where each line is one of possibly 3 thresholds. This also includes reference to account_id or organization_id
+  - name: stg_credits_used_by_subscription
+    description: TODO describe later

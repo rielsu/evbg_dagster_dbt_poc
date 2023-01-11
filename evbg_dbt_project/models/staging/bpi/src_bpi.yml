@@ -1,0 +1,21 @@
+version: 2
+
+sources:
+  - name: bpi
+    description: Snowflake database where BPI data lives
+    database: bpi_dev3
+    schema: RAW
+    tables:
+      - name: account
+        description: Raw BPI related account data
+      - name: organization
+        description: Raw BPI related organization data
+      - name: notification
+        description: Raw BPI related notification data
+      - name: subscription
+        description: Raw BPI subscription data
+      - name: subscription_threshold_settings
+        description: Raw BPI subscription threshold settings
+      - name: usage_event_monthly
+        description: Raw usage event montly data
+

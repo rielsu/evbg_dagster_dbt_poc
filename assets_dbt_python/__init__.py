@@ -4,6 +4,11 @@ from assets_dbt_python.assets import forecasting, raw_data
 from dagster_dbt import dbt_cli_resource, load_assets_from_dbt_project
 from dagster_duckdb_pandas import duckdb_pandas_io_manager
 
+import pandas as pd
+import plotly.express as px
+from dagster_dbt import load_assets_from_dbt_project
+
+from dagster import AssetIn, MetadataValue, asset, file_relative_path
 from dagster import (
     Definitions,
     ScheduleDefinition,
@@ -21,26 +26,28 @@ dbt_assets = load_assets_from_dbt_project(
     DBT_PROJECT_DIR,
     DBT_PROFILES_DIR,
     # prefix the output assets based on the database they live in plus the name of the schema
-    key_prefix=["duckdb", "dbt_schema"],
+    key_prefix=["snowflake", "dbt_schema"],
     # prefix the source assets based on just the database
     # (dagster populates the source schema information automatically)
-    source_key_prefix=["duckdb"],
+    source_key_prefix=["snowflake"],
+    use_build_command=False,
 )
 
-# raw_data_assets = load_assets_from_package_module(
-#     raw_data,
-#     group_name="raw_data",
-#     # all of these assets live in the duckdb database, under the schema raw_data
-#     key_prefix=["duckdb", "raw_data"],
-# )
+@asset(
+   key_prefix=["snowflake", "dbt_schema", "stg_subscription_threshold_triggers"],
+   group_name="staging",
+)
+def stg_subscription_threshold_triggers_chart(context, stg_subscription_threshold_triggers: pd.DataFrame):
+   fig = px.histogram(stg_subscription_threshold_triggers, x="number_of_orders")
+   fig.update_layout(bargap=0.2)
+   save_chart_path = file_relative_path(__file__, "order_count_chart.html")
+   fig.write_html(save_chart_path, auto_open=True)
 
-# forecasting_assets = load_assets_from_package_module(
-#     forecasting,
-#     group_name="forecasting",
-# )
+   context.add_output_metadata({"plot_url": MetadataValue.url("file://" + save_chart_path)})
+
 
 # define jobs as selections over the larger graph
-# everything_job = define_asset_job("everything_everywhere_job", selection="*")
+everything_job = define_asset_job("everything_everywhere_job", selection="*")
 # forecast_job = define_asset_job("refresh_forecast_model_job", selection="*order_forecast_model")
 
 resources = {
@@ -58,10 +65,11 @@ resources = {
 
 defs = Definitions(
     #assets=[*dbt_assets, *raw_data_assets, *forecasting_assets],
-    assets=[*dbt_assets],
+    assets=[*dbt_assets,stg_subscription_threshold_triggers_chart],
     resources=resources,
-    # schedules=[
-    #     ScheduleDefinition(job=everything_job, cron_schedule="@weekly"),
-    #     ScheduleDefinition(job=forecast_job, cron_schedule="@daily"),
-    # ],
+    schedules=[
+        ScheduleDefinition(job=everything_job, cron_schedule="*/15 * * * *"),
+        #ScheduleDefinition(job=forecast_job, cron_schedule="@daily"),
+    ],
 )
+
