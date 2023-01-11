@@ -1,5 +1,5 @@
 evbg:
-  target: development
+  target: development_pass
   outputs:
     local:
       type: duckdb
@@ -14,9 +14,10 @@ evbg:
       type: snowflake
       user: suriel.garcia@everbridge.com
       warehouse: DEV_WH
-    staging:
+    development_pass:
       account: vha23173
-      authenticator: externalbrowser
+      user: "{{ env_var('DBT_USER', 'atlantis_user') }}"
+      password: "{{ env_var('DBT_PASSWORD', var('dbt_password')) }}"
       database: RISK_EVENTS
       role: ACCOUNTADMIN
       schema: ANALYTICS
